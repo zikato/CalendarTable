@@ -17,12 +17,24 @@ CREATE TABLE dbo.Calendar (
   , QuarterNum tinyint NOT NULL
   , MonthNum tinyint NOT NULL
   , MonthNameVal nvarchar(30) NOT NULL
-  , IsoWeek tinyint NOT NULL
-  , DayOfMothNum tinyint NOT NULL
   , DayOfYearNum smallint NOT NULL
+  , DayOfMonthNum tinyint NOT NULL
   , DayOfWeekNum tinyint NOT NULL
-  , BankHoliday tinyint NOT NULL
-  , IsWorkday tinyint NOT NULL
+  , DayOfWeekNameVal nvarchar(30) NOT NULL
+  , WeekNum tinyint NOT NULL
+  , IsoWeekNum tinyint NOT NULL
+  , FirstDayOfMonth date NOT NULL
+  , LastDayOfMonth date NOT NULL
+  , MonthOffset int NOT NULL
+  , WeekOffset int NOT NULL
+  , IsoWeekOffset int NOT NULL
+  , DayOffset int NOT NULL
+  , IsWeekend tinyint NOT NULL
+  , IsBankHoliday tinyint NOT NULL
+  , IsWorkingDay tinyint NOT NULL
+  , FiscalYear smallint NOT NULL
+  , FiscalMonth tinyint NOT NULL
+  , FiscalQuarter tinyint NOT NULL
 )
 
 GO
@@ -65,7 +77,7 @@ AS
 	  , DATEPART(MONTH, d.DateVal) AS MonthNum
 	  , DATENAME(MONTH, d.DateVal) AS MonthNameVal
 	  , DATEPART(DAYOFYEAR, d.DateVal) AS DayOfYearNum
-	  , DATEPART(DAY, d.DateVal) AS DayOfMothNum
+	  , DATEPART(DAY, d.DateVal) AS DayOfMonthNum
 	  , DATEPART(WEEKDAY, d.DateVal) AS DayOfWeekNum
 	  , DATENAME(WEEKDAY, d.DateVal) AS DayOfWeekNameVal
 	  , DATEPART(WEEK, d.DateVal) AS WeekNum
@@ -127,8 +139,7 @@ AS
 	WHERE 
 		D.DateVal < @endDate
 )
---INSERT INTO dbo.Calendar WITH (TABLOCKX)
---(DateVal, YearNum, QuarterNum, MonthNum, IsoWeek, DayOfMothNum, DayOfYearNum, DayOfWeekNum, BankHoliday, IsWorkday)
+INSERT INTO dbo.Calendar WITH (TABLOCKX)
 SELECT
 	*
 FROM calendar AS c
