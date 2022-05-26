@@ -1,10 +1,5 @@
 
 
---BEGIN TRANSACTION
-
-USE Utility;
-
-
 SET LANGUAGE English; /* Language affects the weekday name and DATEFORMAT */
 SET DATEFIRST 1;  /* First day of the week is Monday */
 
@@ -145,17 +140,3 @@ SELECT
 FROM calendar AS c
 ORDER BY c.DateVal
 
-
-
---SELECT
---	*
---FROM dbo.Calendar AS c	
---WHERE c.DateVal = CAST(GETDATE() AS date)
-
-
-
-
-
-
--- ROLLBACK
--- COMMIT
