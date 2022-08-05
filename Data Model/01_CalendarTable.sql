@@ -7,6 +7,7 @@ CREATE TABLE dbo.Calendar (
   , MonthNameVal nvarchar(30) NOT NULL
   , DayOfMonthNum tinyint NOT NULL
   , DayOfYearNum smallint NOT NULL
+  , DayOfMonthNum tinyint NOT NULL
   , DayOfWeekNum tinyint NOT NULL
   , DayOfWeekNameVal nvarchar(30) NOT NULL
   , WeekNum tinyint NOT NULL
