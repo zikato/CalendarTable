@@ -107,10 +107,14 @@ UPDATE wo WITH (TABLOCKX)
     SET wo.WorkdayOffset = WorkdayOffsetCalc
 FROM WorkdayOffset AS wo
 
-/* Create a supporting index */
+/* 
+    Create a supporting index 
 CREATE NONCLUSTERED INDEX IX_Calendar_WorkdayOffset ON dbo.Calendar
 (WorkdayOffset) INCLUDE (DateVal)
 
+*/
+
+/* Create an ITVF to wrap the logic */
 GO
 CREATE OR ALTER FUNCTION dbo.GetWorkdayOffset
 (
@@ -133,9 +137,7 @@ RETURN
         )
 GO
 
-
-
-SET STATISTICS IO, TIME ON;
+/* Test */
 SELECT * FROM dbo.GetWorkdayOffset(DATEFROMPARTS(2022,9,23),7) AS gwo 
 
 

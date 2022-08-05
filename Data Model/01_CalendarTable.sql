@@ -7,7 +7,6 @@ CREATE TABLE dbo.Calendar (
   , MonthNameVal nvarchar(30) NOT NULL
   , DayOfMonthNum tinyint NOT NULL
   , DayOfYearNum smallint NOT NULL
-  , DayOfMonthNum tinyint NOT NULL
   , DayOfWeekNum tinyint NOT NULL
   , DayOfWeekNameVal nvarchar(30) NOT NULL
   , WeekNum tinyint NOT NULL
@@ -104,13 +103,9 @@ AS
 		, DATEDIFF(DAY, @startDate, d.DateVal) AS DayOffset
 		, DATEDIFF(DAY, @startDate, d.DateVal) AS WorkdayOffset /* dummy values - recalculate on Holiday update */
 		/* Booleans */
-		, CASE DATEPART(weekday, DATEADD(day, @@DATEFIRST - 1, d.DateVal)) /* Itzik Ben-Gan's @@datefirst compensation method */
-			WHEN 6 THEN 1
-			WHEN 7 THEN 1
-			ELSE 0 
-		END AS IsWeekend
+		, iw.IsWeekend
 		, 0 AS IsBankHoliday
-		, 0 AS IsWorkday
+		, IIF(iw.IsWeekend = 0, 1, 0) AS IsWorkday
 		/* Fiscal dateparts */
 		, fy.FiscalYear
 		, FLOOR(((12 + MONTH(d.DateVal) - @fiscalYear_MonthStart) % 12) / 3 ) + 1 AS FiscalQuarter
@@ -137,6 +132,17 @@ AS
 			(YEAR(d.DateVal) - 1) + @fiscalYearEnds + CASE WHEN MONTH(d.DateVal) < @fiscalYear_MonthStart THEN 0 ELSE 1 END
 		)
 	) fy (FiscalYear)
+    CROSS APPLY 
+    (
+        VALUES
+        (
+            CASE DATEPART(weekday, DATEADD(day, @@DATEFIRST - 1, d.DateVal)) /* Itzik Ben-Gan's @@datefirst compensation method */
+			    WHEN 6 THEN 1
+			    WHEN 7 THEN 1
+			    ELSE 0 
+		    END 
+        )
+    ) AS iw (IsWeekend)
 	WHERE 
         d.DateVal > @startDate
 		AND D.DateVal < @endDate
