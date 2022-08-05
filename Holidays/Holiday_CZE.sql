@@ -135,9 +135,16 @@ RETURN
             FROM dbo.Calendar AS c
             WHERE c.DateVal = @StartDate
         )
+        AND c.IsWorkday = 1
+ 
 GO
 
 /* Test */
-SELECT * FROM dbo.GetWorkdayOffset(DATEFROMPARTS(2022,9,23),7) AS gwo 
+SELECT * FROM dbo.GetWorkdayOffset(DATEFROMPARTS(2022,9,23),4) AS gwo 
 
 
+SELECT 
+	c.DateVal
+    , c.WorkdayOffset
+FROM dbo.Calendar AS c
+WHERE c.DateVal = DATEFROMPARTS(2022,9,23)
